@@ -1,7 +1,50 @@
-<script>
+<script lang="ts">
   import Icon from "@iconify/svelte";
+  type Schedule = {
+    [key: string]: { start: string; end: string };
+  };
+  const schedule = {
+    Monday: { start: "17:00", end: "21:00" },
+    Tuesday: { start: "00:00", end: "23:59" },
+    Wednesday: { start: "17:00", end: "21:00" },
+    Thursday: { start: "17:00", end: "21:00" },
+    Friday: { start: "17:00", end: "21:00" },
+    Saturday: { start: "17:00", end: "21:00" },
+    Sunday: { start: "00:00", end: "00:00" },
+  };
+  const daysOfWeek = Object.keys(schedule);
 
-  // your script goes here
+  function isAvailable(day: string): Boolean {
+    const now = new Date();
+    const currentTime = now.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+    console.log(currentTime);
+
+    if (day === "Sunday") return false;
+
+    const { start, end } = schedule[day as keyof typeof schedule];
+    return currentTime >= start && currentTime <= end;
+  }
+
+  function getDay(day: string) {
+    //tailwind class
+    return isAvailable(day) ? "text-success" : "text-error";
+  }
+  function getText(day: string) {
+    //text
+    return isAvailable(day) ? "Available" : "Closed";
+  }
+
+  //dynamically get day from date
+  //get day from date
+
+  const currentDay = new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+  });
+  console.log(currentDay);
 </script>
 
 <div class="mx-auto container p-2">
@@ -53,10 +96,13 @@
             Hours
           </h2>
           <p>Monday - Saturday: 5:00 PM - 9:00 PM</p>
+          <p>Tuesday: available</p>
           <p>Sunday: Closed</p>
-          <p class="mt-2 text-sm italic">
-            I get off at 5:00 PM from the auto store. Tuesdays and Sundays I'm
-            off from work.
+
+          <!-- singal for whether or not current time is in schedule -->
+          <h2>Current Status:</h2>
+          <p class="text-xl {getDay(currentDay)}">
+            {isAvailable(currentDay) ? "Available" : "Closed"}
           </p>
         </div>
       </div>
@@ -68,14 +114,14 @@
     <div class="card bg-base-100 shadow-xl">
       <div class="card-body">
         <h2 class="card-title">On Nextdoor?</h2>
-        <p>Check out our reviews on Nextdoor</p>
+        <p>Get in contact with me on Nextdoor</p>
         <div class="card-actions">
           <a
             class="btn btn-primary"
-            href="https://nextdoor.com"
+            href="https://nextdoor.com/profile/01L3TtYWhd547HkmK"
             target="_blank"
           >
-            <Icon icon="ph:door-bold" class="mr-2" />
+            <Icon icon="ph:door-bold" class="mr-2 text-3xl" />
             Nextdoor
           </a>
         </div>
